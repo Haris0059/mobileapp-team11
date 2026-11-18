@@ -1,0 +1,58 @@
+name: iOS build and screenshots
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build for iPhone simulator
+        run: |
+          set -o pipefail
+          xcodebuild -project DeadlineRadar.xcodeproj -target DeadlineRadar \
+            -sdk iphonesimulator -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO SYMROOT="$PWD/build" build | tee build.log | grep -E "error:|warning:|BUILD" || true
+          test -d build/Debug-iphonesimulator/DeadlineRadar.app
+
+      - name: Take screenshots (light and dark)
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)["devices"]
+          ios = sorted((k for k in d if "iOS" in k), key=lambda k: [int(x) for x in k.split("iOS-")[1].split("-")])
+          phones = [x for x in d[ios[-1]] if x["name"].startswith("iPhone")]
+          pro = [x for x in phones if "Pro" in x["name"] and "Max" not in x["name"]]
+          dev = (pro or phones)[0]
+          print(dev["udid"]); print(dev["name"], ios[-1], file=sys.stderr)')
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl status_bar "$UDID" override --time "9:41" --batteryLevel 100 --cellularBars 4
+          xcrun simctl install "$UDID" build/Debug-iphonesimulator/DeadlineRadar.app
+          mkdir -p screenshots
+          for mode in light dark; do
+            xcrun simctl ui "$UDID" appearance "$mode"
+            for tab in home chat profile; do
+              xcrun simctl terminate "$UDID" ba.ibu.team11.DeadlineRadar || true
+              xcrun simctl launch "$UDID" ba.ibu.team11.DeadlineRadar -tab "$tab"
+              sleep 4
+              xcrun simctl io "$UDID" screenshot "screenshots/$mode-$tab.png"
+            done
+          done
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: |
+            screenshots/
+            build.log
