@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phosphor Light Versions</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:rgba(0,0,0,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--muted:#98989d;--line:rgba(255,255,255,.1)}}
+:root[data-theme="dark"]{--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--muted:#98989d;--line:rgba(255,255,255,.1)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);font:100%/1.5 -apple-system,system-ui,sans-serif;padding:40px 16px 80px;transition:background .3s,color .3s}
+header{max-width:1100px;margin:0 auto 28px;display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+h1{font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.05;letter-spacing:-.02em}
+header p{color:var(--muted);max-width:66ch;margin-top:6px}
+button{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:99px;padding:7px 14px;font:inherit;font-size:.85rem;cursor:pointer}
+button:active{transform:scale(.97)}
+.grid{max-width:1100px;margin:0 auto;display:grid;gap:24px}
+.opt{background:var(--card);border-radius:28px;padding:28px;border:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px}
+@media (max-width:860px){.opt{grid-template-columns:1fr}}
+.opt h2{font-size:1.5rem;letter-spacing:-.01em}
+.kicker{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.tag{color:var(--muted);font-size:.95rem;margin:4px 0 18px;max-width:52ch}
+.icons{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.icons figure{text-align:center;font-size:.75rem;color:var(--muted)}
+.icon{width:96px;height:96px;border-radius:22px;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.35);margin-bottom:6px;position:relative;overflow:hidden}
+.icon svg{width:64%;height:64%;position:relative}
+.pal{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;font-size:.7rem;color:var(--muted);max-width:520px;margin-bottom:12px}
+.sw{height:38px;border-radius:10px;border:1px solid var(--line);display:flex;align-items:end;padding:3px 5px;font:600 .58rem ui-monospace,monospace}
+ul.notes{font-size:.85rem;color:var(--muted);padding-left:18px;max-width:52ch}
+.phones{display:flex;gap:16px;flex-wrap:wrap}
+.phone{width:200px;height:410px;border-radius:36px;padding:10px;background:#111;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.screen{position:relative;height:100%;border-radius:28px;overflow:hidden;background:var(--pbg);color:var(--ptext);padding:30px 12px 0;font-size:.68rem;isolation:isolate}
+.screen>.deco{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.top h3{font-size:1.2rem;letter-spacing:-.02em}
+.sub{opacity:.6;margin-bottom:8px}
+.top svg{width:22px;height:22px}
+.strip{display:flex;gap:4px;margin-bottom:9px}
+.strip span{flex:1;text-align:center;padding:5px 0;border-radius:10px;font-weight:600;position:relative}
+.strip span i{position:absolute;bottom:3px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:2px;background:var(--pu)}
+.surf{background:var(--psurf);border:1px solid var(--pedge);box-shadow:var(--pshadow)}
+.glass .surf{backdrop-filter:blur(16px) saturate(170%);-webkit-backdrop-filter:blur(16px) saturate(170%)}
+.strip span.on{background:var(--pa);color:var(--pona);border-color:transparent}
+.c{border-radius:15px;padding:9px 10px;margin-bottom:7px;display:flex;gap:8px;align-items:center}
+.c i{width:6px;align-self:stretch;border-radius:3px}
+.c small{display:block;opacity:.6}
+.c em{margin-left:auto;font-style:normal;font-weight:700;font-size:.62rem;padding:2px 6px;border-radius:6px}
+.nav{position:absolute;left:14px;right:14px;bottom:12px;height:52px;border-radius:26px;display:flex;justify-content:space-around;align-items:center;
+  background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.02) 60%),var(--nglass);
+  backdrop-filter:blur(10px) saturate(200%) brightness(1.05);-webkit-backdrop-filter:blur(10px) saturate(200%) brightness(1.05);
+  border:1px solid var(--nedge);box-shadow:0 10px 28px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.65),inset 0 -1px 0 rgba(255,255,255,.18),inset 0 0 12px rgba(255,255,255,.08)}
+.nav span{display:grid;place-items:center;width:52px;height:38px;border-radius:19px}
+.nav svg{width:22px;height:22px;color:var(--ptext);opacity:.5}
+.nav .on{background:var(--non);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(255,255,255,.12),0 2px 8px rgba(0,0,0,.08)}
+.nav .on svg{opacity:1;color:var(--nonc)}
+.mode{text-align:center;font-size:.72rem;color:var(--muted);margin-top:6px}
+.ref{max-width:1100px;margin:0 auto 24px;display:flex;gap:20px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:20px 28px;flex-wrap:wrap}
+.ref p{color:var(--muted);max-width:50ch}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Phosphor: three new light modes</h1>
+  <p>Dark stays exactly as you liked it. The old light mode used amber as a text colour on cream, which turned muddy brown. In all three new versions amber is only a <b>fill</b> (selected day, active tab) with ink text on top, and ink navy carries the text and icons. Versions 2 and 3 test the iOS 26 Liquid Glass look.</p></div>
+  <button id="t">Switch page theme</button>
+</header>
+<section class="ref" id="ref"></section>
+<main class="grid" id="g"></main>
+<script>
+const radar=(ring,dot)=>`<svg viewBox="0 0 100 100" fill="none" stroke="${ring}" stroke-width="7" stroke-linecap="round"><circle cx="50" cy="50" r="34" opacity=".45"/><circle cx="50" cy="50" r="18" opacity=".75"/><path d="M50 50 L74 26" stroke="${dot}"/><circle cx="74" cy="26" r="7" fill="${dot}" stroke="none"/></svg>`;
+const nav=[
+ `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5z"/></svg>`,
+ `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>`,
+ `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>`];
+const rings=c=>`<svg class="deco" viewBox="0 0 200 400" preserveAspectRatio="xMidYMin slice"><g fill="none" stroke="${c}" stroke-width="1">${[40,80,120,160,200,240].map(r=>`<circle cx="170" cy="40" r="${r}"/>`).join("")}</g></svg>`;
+
+const DARK={name:"Phosphor dark (unchanged)",
+  bg:"#0C1018",surf:"#171D29",edge:"rgba(255,255,255,.04)",shadow:"none",text:"#F3EEE3",p:"#FFB23E",a:"#FFB23E",ona:"#0C1018",u:"#FF6B4F",
+  nglass:"rgba(28,33,44,.32)",nedge:"rgba(255,255,255,.16)",non:"rgba(255,178,62,.2)",nonc:"#FFB23E",deco:"",glass:false,
+  sw:["#FFB23E","#7E93B8","#FF6B4F","#0C1018","#171D29","#F3EEE3"]};
+
+const opts=[
+ {name:"L2+ · Liquid Glass, matched pair",kicker:"Chosen direction · light and dark match",tag:"L2 and Phosphor dark made into one system. Dark now gets the same frosted glass cards and soft glow as light, and both icons are mirror images: ink rings with an amber dot on light, cream rings with an amber dot on dark.",
+  icon:{bg:"linear-gradient(160deg,#FFF7E8,#F2E4CB)",ring:"#1F2B47",dot:"#F29A0E"},
+  notes:["Same rules in both modes: glass cards, glass navbar, amber only as a fill","Glow uses amber + dusk blue in both modes, just dimmer in dark","SwiftUI: one Theme with light/dark values, no separate layouts"],
+  bg:"#F6F1E8",surf:"rgba(255,255,255,.42)",edge:"rgba(255,255,255,.85)",shadow:"0 4px 14px rgba(31,43,71,.08),inset 0 1px 0 rgba(255,255,255,.9)",text:"#18213A",p:"#1F2B47",a:"#F5A524",ona:"#18213A",u:"#D23F24",
+  nglass:"rgba(255,255,255,.22)",nedge:"rgba(255,255,255,.9)",non:"rgba(245,165,36,.3)",nonc:"#1F2B47",glass:true,
+  deco:`<div class="deco" style="background:radial-gradient(circle at 15% 8%,#FFD27A 0,rgba(255,210,122,0) 42%),radial-gradient(circle at 95% 55%,#B9C6E6 0,rgba(185,198,230,0) 48%),radial-gradient(circle at 20% 95%,#FFC59A 0,rgba(255,197,154,0) 40%)"></div>`,
+  sw:["#1F2B47","#F5A524","#D23F24","#F6F1E8","rgba(255,255,255,.42)","#18213A"],
+  dark:{bg:"#0C1018",surf:"rgba(255,255,255,.06)",edge:"rgba(255,255,255,.1)",shadow:"0 4px 14px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.08)",text:"#F3EEE3",p:"#FFB23E",a:"#FFB23E",ona:"#0C1018",u:"#FF6B4F",
+   nglass:"rgba(28,33,44,.32)",nedge:"rgba(255,255,255,.16)",non:"rgba(255,178,62,.2)",nonc:"#FFB23E",glass:true,
+   deco:`<div class="deco" style="background:radial-gradient(circle at 15% 8%,rgba(255,178,62,.28) 0,rgba(255,178,62,0) 42%),radial-gradient(circle at 95% 55%,rgba(74,98,160,.35) 0,rgba(74,98,160,0) 48%),radial-gradient(circle at 20% 95%,rgba(255,140,80,.18) 0,rgba(255,140,80,0) 40%)"></div>`}},
+ {name:"L1 · Parchment & Ink",kicker:"Solid, calm",tag:"Warm paper background, white cards, ink navy text. Amber appears only as a highlight fill, like a marker on paper. The most readable of the three.",
+  icon:{bg:"linear-gradient(160deg,#FFF8EA,#F1E6CF)",ring:"#1F2B47",dot:"#F29A0E"},
+  notes:["No glass on cards: simplest to build in SwiftUI","Liquid Glass bottom navbar, cards stay solid"],
+  bg:"#F4EFE4",surf:"#FFFDF8",edge:"rgba(31,43,71,.06)",shadow:"0 1px 2px rgba(31,43,71,.06)",text:"#1A2030",p:"#1F2B47",a:"#F5A524",ona:"#1A2030",u:"#C8361D",
+  nglass:"rgba(255,253,248,.3)",nedge:"rgba(255,255,255,.85)",non:"rgba(245,165,36,.3)",nonc:"#1F2B47",deco:"",glass:false,
+  sw:["#1F2B47","#F5A524","#C8361D","#F4EFE4","#FFFDF8","#1A2030"]},
+ {name:"L2 · Liquid Glass",kicker:"iOS 26 glass",tag:"A soft amber and dusk-blue glow behind everything, with frosted glass cards and a glass navbar floating on top. Closest to the new iOS look and still light and airy.",
+  icon:{bg:"radial-gradient(circle at 30% 20%,#FFE3A6,#F5B04A 55%,#E58E12)",ring:"#1F2B47",dot:"#FFFFFF"},
+  notes:["SwiftUI: .glassEffect() on iOS 26, .ultraThinMaterial as fallback","Glow is two blurred shapes behind the scroll view"],
+  bg:"#F6F1E8",surf:"rgba(255,255,255,.42)",edge:"rgba(255,255,255,.85)",shadow:"0 4px 14px rgba(31,43,71,.08),inset 0 1px 0 rgba(255,255,255,.9)",text:"#18213A",p:"#1F2B47",a:"#F5A524",ona:"#18213A",u:"#D23F24",
+  nglass:"rgba(255,255,255,.22)",nedge:"rgba(255,255,255,.9)",non:"rgba(245,165,36,.3)",nonc:"#1F2B47",glass:true,
+  deco:`<div class="deco" style="background:radial-gradient(circle at 15% 8%,#FFD27A 0,rgba(255,210,122,0) 42%),radial-gradient(circle at 95% 55%,#B9C6E6 0,rgba(185,198,230,0) 48%),radial-gradient(circle at 20% 95%,#FFC59A 0,rgba(255,197,154,0) 40%)"></div>`,
+  sw:["#1F2B47","#F5A524","#D23F24","#F6F1E8","rgba(255,255,255,.42)","#18213A"]},
+ {name:"L3 · Radar Day",kicker:"Glass + radar texture",tag:"Cool mist background with faint radar rings sweeping from the corner and one amber glow. Glass cards sit over the rings. The most unique: the logo becomes the screen.",
+  icon:{bg:"linear-gradient(160deg,#2A3756,#141C2E)",ring:"#E9EEF7",dot:"#FFB23E"},
+  notes:["Ties light and dark together: same ink icon in both modes","Rings are one SwiftUI Canvas, very cheap"],
+  bg:"#EAEEF4",surf:"rgba(255,255,255,.55)",edge:"rgba(255,255,255,.9)",shadow:"0 4px 14px rgba(36,50,79,.08),inset 0 1px 0 rgba(255,255,255,.9)",text:"#16203A",p:"#24324F",a:"#FFB23E",ona:"#16203A",u:"#CC3A22",
+  nglass:"rgba(255,255,255,.26)",nedge:"rgba(255,255,255,.9)",non:"rgba(255,178,62,.32)",nonc:"#24324F",glass:true,
+  deco:`<div class="deco" style="background:radial-gradient(circle at 88% 6%,rgba(255,178,62,.55) 0,rgba(255,178,62,0) 38%)"></div>`+rings("rgba(36,50,79,.13)"),
+  sw:["#24324F","#FFB23E","#CC3A22","#EAEEF4","rgba(255,255,255,.55)","#16203A"]}
+];
+const phone=(P,label)=>`<div><div class="phone"><div class="screen ${P.glass?"glass":""}" style="--pbg:${P.bg};--psurf:${P.surf};--pedge:${P.edge};--pshadow:${P.shadow};--ptext:${P.text};--pa:${P.a};--pona:${P.ona};--pu:${P.u};--nglass:${P.nglass};--nedge:${P.nedge};--non:${P.non};--nonc:${P.nonc}">
+  ${P.deco}
+  <div class="top"><h3>Today</h3>${radar(P.p==="#FFB23E"?"#F3EEE3":P.p,P.p==="#FFB23E"?"#FFB23E":P.a)}</div>
+  <div class="sub">Wed, 18 Nov · 3 due this week</div>
+  <div class="strip"><span class="surf">M<br>16</span><span class="surf">T<br>17</span><span class="surf on">W<br>18</span><span class="surf">T<br>19<i></i></span><span class="surf">F<br>20<i></i></span></div>
+  <div class="c surf"><i style="background:${P.u}"></i><div><b>DB schema</b><small>IT 3002 · 23:59</small></div><em style="background:${P.u}22;color:${P.u}">5h</em></div>
+  <div class="c surf"><i style="background:${P.a}"></i><div><b>Kick-off pack</b><small>IT 3002 · Fri</small></div><em style="background:${P.a}33;color:${P.text}">2d</em></div>
+  <div class="c surf"><i style="background:${P.p};opacity:.5"></i><div><b>Quiz 3</b><small>Math · Mon</small></div></div>
+  <div class="c surf"><i style="background:${P.text};opacity:.2"></i><div><b>Essay draft</b><small>English · 26 Nov</small></div></div>
+  <div class="c surf"><i style="background:${P.a}"></i><div><b>Lab report</b><small>Physics · 28 Nov</small></div></div>
+  <nav class="nav"><span class="on">${nav[0]}</span><span>${nav[1]}</span><span>${nav[2]}</span></nav>
+ </div></div><div class="mode">${label}</div></div>`;
+const sw=c=>`<div class="sw" style="background:${c};color:${/^#(0|1|2)/.test(c)?"#fff":"#1A2030"}">${c.startsWith("rgba")?"glass":c}</div>`;
+document.getElementById("ref").innerHTML=`${phone(DARK,"Dark (kept)")}<div><span class="kicker">Reference</span><h2 style="font-size:1.4rem;letter-spacing:-.01em">Phosphor dark stays</h2><p>Amber on ink navy, unchanged. The only addition: the navbar is Liquid Glass with an amber glass bubble on the active tab, which matches the new light versions. Each light version below is designed to switch into this dark mode.</p>
+ <div class="icons" style="margin-top:14px"><figure><div class="icon" style="background:linear-gradient(160deg,#171D29,#0C1018)">${radar("#F3EEE3","#FFB23E")}</div>Dark icon</figure></div></div>`;
+document.getElementById("g").innerHTML=opts.map(o=>`
+<section class="opt"><div>
+ <span class="kicker">${o.kicker}</span><h2>${o.name}</h2><p class="tag">${o.tag}</p>
+ <div class="icons"><figure><div class="icon" style="background:${o.icon.bg}">${radar(o.icon.ring,o.icon.dot)}</div>Light icon</figure>
+  <figure><div class="icon" style="background:linear-gradient(160deg,#171D29,#0C1018)">${radar("#F3EEE3","#FFB23E")}</div>Dark icon</figure></div>
+ <div class="pal"><span>Ink</span><span>Amber</span><span>Urgent</span><span>Backgr.</span><span>Card</span><span>Text</span>${o.sw.map(sw).join("")}</div>
+ <ul class="notes">${o.notes.map(n=>`<li>${n}</li>`).join("")}</ul>
+ </div>
+ <div class="phones">${phone(o,"Light")}${phone(o.dark||DARK,o.dark?"Dark (matched)":"Dark")}</div>
+</section>`).join("");
+document.getElementById("t").onclick=()=>{const r=document.documentElement,d=r.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");r.dataset.theme=d==="dark"?"light":"dark"};
+</script>
+</body>
+</html>

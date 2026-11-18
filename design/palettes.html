@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deadline Radar Palettes</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:rgba(0,0,0,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--muted:#98989d;--line:rgba(255,255,255,.1)}}
+:root[data-theme="dark"]{--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--muted:#98989d;--line:rgba(255,255,255,.1)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);font:100%/1.5 -apple-system,system-ui,sans-serif;padding:40px 16px 80px;transition:background .3s,color .3s}
+header{max-width:1100px;margin:0 auto 28px;display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+h1{font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.05;letter-spacing:-.02em}
+header p{color:var(--muted);max-width:66ch;margin-top:6px}
+button,a.btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:99px;padding:7px 14px;font:inherit;font-size:.85rem;cursor:pointer;text-decoration:none;display:inline-block}
+button:active,a.btn:active{transform:scale(.97)}
+.grid{max-width:1100px;margin:0 auto;display:grid;gap:24px}
+.opt{background:var(--card);border-radius:28px;padding:28px;border:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px}
+@media (max-width:860px){.opt{grid-template-columns:1fr}}
+.opt h2{font-size:1.5rem;letter-spacing:-.01em}
+.tag{color:var(--muted);font-size:.95rem;margin:2px 0 18px;max-width:52ch}
+.icons{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.icons figure{text-align:center;font-size:.75rem;color:var(--muted)}
+.icon{width:96px;height:96px;border-radius:22px;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.22);margin-bottom:6px}
+.icon svg{width:64%;height:64%}
+.pal{display:grid;grid-template-columns:auto repeat(6,1fr);gap:6px;align-items:center;font-size:.7rem;color:var(--muted);max-width:520px;margin-bottom:14px}
+.sw{height:38px;border-radius:10px;border:1px solid var(--line);display:flex;align-items:end;padding:3px 5px;font:600 .58rem ui-monospace,monospace}
+.meta{font-size:.78rem;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ok{color:#2e9d57}.warn{color:#c47a00}
+.phones{display:flex;gap:16px;flex-wrap:wrap}
+.phone{width:190px;height:390px;border-radius:34px;padding:10px;background:#111;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.screen{position:relative;height:100%;border-radius:26px;overflow:hidden;background:var(--pbg);color:var(--ptext);padding:28px 12px 0;font-size:.68rem}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.top h3{font-size:1.15rem;letter-spacing:-.02em}
+.top svg{width:20px;height:20px;color:var(--pp)}
+.strip{display:flex;gap:4px;margin-bottom:8px}
+.strip span{flex:1;text-align:center;padding:5px 0;border-radius:9px;background:var(--psurf);font-weight:600;position:relative}
+.strip span.on{background:var(--pp);color:var(--pon)}
+.strip span i{position:absolute;bottom:3px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:2px;background:var(--pu)}
+.c{background:var(--psurf);border-radius:14px;padding:9px 10px;margin-bottom:7px;display:flex;gap:8px;align-items:center}
+.c i{width:6px;align-self:stretch;border-radius:3px}
+.c small{display:block;opacity:.6}
+.c em{margin-left:auto;font-style:normal;font-weight:700;font-size:.62rem;padding:2px 6px;border-radius:6px}
+.nav{position:absolute;left:14px;right:14px;bottom:12px;height:50px;border-radius:25px;display:flex;justify-content:space-around;align-items:center;
+  background:var(--glass);backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);
+  border:1px solid var(--glassedge);box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.nav svg{width:22px;height:22px;color:var(--ptext);opacity:.5}
+.nav .on svg{opacity:1;color:var(--pp)}
+.blob{position:absolute;bottom:22px;left:-10px;width:120px;height:56px;border-radius:30px;background:var(--pa);opacity:.55}
+.mode{text-align:center;font-size:.72rem;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Radar logo: colour exploration</h1>
+  <p>The usual picks are out: in the ui-ux-pro-max palette data, Educational, Calendar, Study and LMS apps all default to blue, indigo or teal. These five avoid that. Each palette has light and dark tokens, an urgency colour for "due today", and a contrast check of the primary against its background.</p></div>
+  <button id="t">Switch page theme</button>
+</header>
+<main class="grid" id="g"></main>
+<script>
+const radar=`<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"><circle cx="50" cy="50" r="34" opacity=".45"/><circle cx="50" cy="50" r="18" opacity=".75"/><path d="M50 50 L74 26"/><circle cx="74" cy="26" r="7" fill="currentColor" stroke="none"/></svg>`;
+const nav=[
+ `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5z"/></svg>`,
+ `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>`,
+ `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>`];
+// p primary, a accent, bg, s surface, t text, u urgent; icon: [gradFrom, gradTo, glyph]
+const opts=[
+ {name:"A · Phosphor",tag:"Old radar screens glowed amber. Warm amber on deep ink navy: technical, focused, and rare among student apps.",
+  icon:["#FFC24A","#EE9608","#1A1407"],
+  L:{p:"#A86200",a:"#2B3A55",bg:"#FAF7F0",s:"#FFFFFF",t:"#1B1A17",u:"#D23F24"},
+  D:{p:"#FFB23E",a:"#7E93B8",bg:"#0C1018",s:"#171D29",t:"#F3EEE3",u:"#FF6B4F"}},
+ {name:"B · Plum & Apricot",tag:"Deep plum with a soft apricot accent. Calm and grown-up, with a warm highlight that marks what matters.",
+  icon:["#A2457F","#5E1D47","#FFD3B8"],
+  L:{p:"#7B2D5E",a:"#FF9F6B",bg:"#FBF6F4",s:"#FFFFFF",t:"#2A1422",u:"#D93A2E"},
+  D:{p:"#E59BC8",a:"#FFB38A",bg:"#140A10",s:"#24141E",t:"#F8E9F1",u:"#FF7A66"}},
+ {name:"C · Terracotta & Sage",tag:"Earthy clay with a sage accent, like paper and pencil. Soft on the eyes during long study weeks.",
+  icon:["#DB7550","#A3412A","#FFF4EC"],
+  L:{p:"#A9462A",a:"#6F8F72",bg:"#F6F2EC",s:"#FFFDF9",t:"#2B211C",u:"#C42B1C"},
+  D:{p:"#F08A64",a:"#9DBA9F",bg:"#14100D",s:"#221B17",t:"#F3ECE4",u:"#FF6F5A"}},
+ {name:"D · Petrol & Saffron",tag:"Dark petrol (between green and blue, not the stock teal) with a saffron spark for the next deadline.",
+  icon:["#1B7B8E","#0A3F4C","#FFC93C"],
+  L:{p:"#0F5B6B",a:"#E09B00",bg:"#F3F6F5",s:"#FFFFFF",t:"#0F2328",u:"#D9480F"},
+  D:{p:"#5CC3D6",a:"#FFC23D",bg:"#071417",s:"#102328",t:"#E6F4F6",u:"#FF7A45"}},
+ {name:"E · Sonar",tag:"Mint sonar glow on deep forest green. Fresh and calm, and the radar mark looks like a real screen.",
+  icon:["#1E5E3F","#0C3020","#7CF0A9"],
+  L:{p:"#1C7048",a:"#8FBF3A",bg:"#F2F6F1",s:"#FFFFFF",t:"#132019",u:"#D24B3E"},
+  D:{p:"#6FE3A0",a:"#C9F27A",bg:"#08110C",s:"#122019",t:"#E7F5EC",u:"#FF7B6B"}}
+];
+const lum=h=>{const c=[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255).map(v=>v<=.03928?v/12.92:((v+.055)/1.055)**2.4);return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+const cr=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+const ratio=(a,b)=>{const r=cr(a,b);return `<span class="${r>=4.5?"ok":r>=3?"warn":""}">${r.toFixed(1)}:1</span>`};
+const sw=(c,bg)=>`<div class="sw" style="background:${c};color:${cr(c,"#ffffff")>cr(c,"#000000")?"#fff":"#000"}">${c}</div>`;
+const phone=(P,mode)=>{
+ const light=mode==="Light";
+ return `<div><div class="phone"><div class="screen" style="--pbg:${P.bg};--psurf:${P.s};--ptext:${P.t};--pp:${P.p};--pa:${P.a};--pu:${P.u};--pon:${light?"#fff":P.bg};--glass:${light?"rgba(255,255,255,.55)":"rgba(40,40,46,.5)"};--glassedge:${light?"rgba(255,255,255,.7)":"rgba(255,255,255,.12)"}">
+  <div class="top"><h3>Today</h3>${radar}</div>
+  <div class="strip"><span>M<br>16</span><span>T<br>17</span><span class="on">W<br>18</span><span>T<br>19<i></i></span><span>F<br>20<i></i></span></div>
+  <div class="c"><i style="background:${P.u}"></i><div><b>DB schema</b><small>IT 3002 · 23:59</small></div><em style="background:${P.u}22;color:${P.u}">5h</em></div>
+  <div class="c"><i style="background:${P.p}"></i><div><b>Kick-off pack</b><small>IT 3002 · Fri</small></div><em style="background:${P.p}22;color:${P.p}">2d</em></div>
+  <div class="c"><i style="background:${P.a}"></i><div><b>Quiz 3</b><small>Math · Mon</small></div></div>
+  <div class="c"><i style="background:${P.t};opacity:.2"></i><div><b>Essay draft</b><small>English · 26 Nov</small></div></div>
+  <div class="blob"></div>
+  <nav class="nav"><span class="on">${nav[0]}</span><span>${nav[1]}</span><span>${nav[2]}</span></nav>
+ </div></div><div class="mode">${mode}</div></div>`};
+const coolors=o=>"https://coolors.co/"+[o.L.p,o.L.a,o.L.bg,o.D.p,o.D.bg,o.L.u].map(h=>h.slice(1).toLowerCase()).join("-");
+document.getElementById("g").innerHTML=opts.map(o=>`
+<section class="opt"><div>
+ <h2>${o.name}</h2><p class="tag">${o.tag}</p>
+ <div class="icons">
+  <figure><div class="icon" style="background:linear-gradient(160deg,${o.icon[0]},${o.icon[1]});color:${o.icon[2]}">${radar}</div>Light icon</figure>
+  <figure><div class="icon" style="background:linear-gradient(160deg,${o.D.s},${o.D.bg});color:${o.D.p}">${radar}</div>Dark icon</figure>
+ </div>
+ <div class="pal"><span></span><span>Primary</span><span>Accent</span><span>Urgent</span><span>Backgr.</span><span>Surface</span><span>Text</span>
+  <span>Light</span>${sw(o.L.p)}${sw(o.L.a)}${sw(o.L.u)}${sw(o.L.bg)}${sw(o.L.s)}${sw(o.L.t)}
+  <span>Dark</span>${sw(o.D.p)}${sw(o.D.a)}${sw(o.D.u)}${sw(o.D.bg)}${sw(o.D.s)}${sw(o.D.t)}
+ </div>
+ <div class="meta">Primary vs background: light ${ratio(o.L.p,o.L.bg)} · dark ${ratio(o.D.p,o.D.bg)}
+  <a class="btn" href="${coolors(o)}" target="_blank" rel="noopener">Open in Coolors</a></div>
+ </div>
+ <div class="phones">${phone(o.L,"Light")}${phone(o.D,"Dark")}</div>
+</section>`).join("");
+document.getElementById("t").onclick=()=>{const r=document.documentElement,d=r.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");r.dataset.theme=d==="dark"?"light":"dark"};
+</script>
+</body>
+</html>
