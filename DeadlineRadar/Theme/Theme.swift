@@ -36,10 +36,22 @@ private extension UIColor {
 }
 
 extension View {
-    /// Frosted Liquid Glass card used for every surface in the app.
+    /// Liquid Glass on iOS 26+, frosted material on iOS 17–18.
+    @ViewBuilder
+    func glass<S: Shape>(in shape: S, enabled: Bool = true, interactive: Bool = false) -> some View {
+        if !enabled {
+            self
+        } else if #available(iOS 26, *) {
+            glassEffect(interactive ? .regular.interactive() : .regular, in: shape)
+        } else {
+            background(.ultraThinMaterial, in: shape)
+        }
+    }
+
+    /// Glass card used for every surface in the app.
     func glassCard(cornerRadius: CGFloat = 18, padding: CGFloat = 14) -> some View {
         self.padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .glassEffect(.regular, in: .rect(cornerRadius: cornerRadius))
+            .glass(in: .rect(cornerRadius: cornerRadius))
     }
 }

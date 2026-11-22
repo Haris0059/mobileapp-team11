@@ -72,8 +72,7 @@ private struct WeekStrip: View {
     }
 
     var body: some View {
-        GlassEffectContainer {
-            HStack(spacing: 6) {
+        HStack(spacing: 6) {
                 ForEach(days, id: \.self) { day in
                     let isSelected = calendar.isDate(day, inSameDayAs: selected)
                     let hasDeadline = deadlines.contains { calendar.isDate($0.due, inSameDayAs: day) }
@@ -91,11 +90,10 @@ private struct WeekStrip: View {
                         .background {
                             if isSelected { RoundedRectangle(cornerRadius: 12).fill(Theme.amber) }
                         }
-                        .glassEffect(isSelected ? .identity : .regular, in: .rect(cornerRadius: 12))
+                        .glass(in: .rect(cornerRadius: 12), enabled: !isSelected)
                     }
                     .buttonStyle(.plain)
                 }
-            }
         }
     }
 }

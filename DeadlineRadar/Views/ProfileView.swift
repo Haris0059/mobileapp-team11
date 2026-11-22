@@ -74,7 +74,7 @@ private struct SourceRow: View {
             Image(systemName: icon)
                 .foregroundStyle(Theme.ink)
                 .frame(width: 30, height: 30)
-                .glassEffect(.regular, in: .rect(cornerRadius: 8))
+                .glass(in: .rect(cornerRadius: 8))
             Text(title)
             Spacer()
             Text(detail).font(.subheadline).foregroundStyle(.secondary)

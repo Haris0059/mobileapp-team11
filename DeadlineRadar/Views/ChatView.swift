@@ -39,7 +39,7 @@ struct ChatView: View {
                             .font(.footnote)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 7)
-                            .glassEffect(.regular.interactive(), in: .capsule)
+                            .glass(in: .capsule, interactive: true)
                             .buttonStyle(.plain)
                     }
                 }
@@ -55,7 +55,7 @@ struct ChatView: View {
                     .onSubmit(send)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 22))
+                    .glass(in: .rect(cornerRadius: 22))
 
                 Button(action: send) {
                     Image(systemName: "arrow.up")
@@ -95,8 +95,8 @@ private struct MessageBubble: View {
                 .background {
                     if message.fromUser { UnevenRoundedRectangle(cornerRadii: .init(topLeading: 18, bottomLeading: 18, bottomTrailing: 6, topTrailing: 18)).fill(Theme.amber) }
                 }
-                .glassEffect(message.fromUser ? .identity : .regular,
-                             in: UnevenRoundedRectangle(cornerRadii: .init(topLeading: 18, bottomLeading: 6, bottomTrailing: 18, topTrailing: 18)))
+                .glass(in: UnevenRoundedRectangle(cornerRadii: .init(topLeading: 18, bottomLeading: 6, bottomTrailing: 18, topTrailing: 18)),
+                       enabled: !message.fromUser)
 
             if !message.fromUser { Spacer(minLength: 48) }
         }

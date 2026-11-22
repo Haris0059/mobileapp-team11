@@ -25,7 +25,7 @@ This repository is the **clickable UI prototype** for the iPhone. It has **no ba
 | **Chat** | "Radar AI", a chat assistant that will be connected to the university and Moodle (placeholder replies for now) |
 | **Profile** | Student card, connected sources (Moodle, iCal), reminder settings and app info. No sign-up yet |
 
-Navigation is the system bottom tab bar, which on iOS 26 is a floating **Liquid Glass** bar.
+Navigation is the system bottom tab bar, which on iOS 26 is a floating **Liquid Glass** bar. The app runs on **iOS 17+**: on iOS 17–18 glass falls back to the frosted material and the classic tab bar.
 
 ## Design
 
@@ -49,7 +49,9 @@ All design rounds (logos, palettes, light-mode versions) are in [`design/`](desi
 
 ## Run it
 
-Requirements: a Mac with **Xcode 26** (iOS 26 SDK, for Liquid Glass).
+Requirements: a Mac with **Xcode 26** (iOS 26 SDK). The app itself runs on iOS 17 and later.
+
+**On Linux:** install [xtool](https://github.com/xtool-org/xtool) (1.24+), log in with `xtool auth login`, plug in your iPhone and run `xtool dev`. It uses `Package.swift` and `xtool.yml`.
 
 1. Clone the repo and open `DeadlineRadar.xcodeproj`.
 2. Pick an iPhone simulator and press **Run** (⌘R).

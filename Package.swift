@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "DeadlineRadar",
-    platforms: [.iOS("26.0")],
+    platforms: [.iOS(.v17)],
     products: [.library(name: "DeadlineRadar", targets: ["DeadlineRadar"])],
     targets: [
         .target(

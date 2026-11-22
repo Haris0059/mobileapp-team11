@@ -9,16 +9,16 @@ struct DeadlineRadarApp: App {
     }
 }
 
-/// Bottom navigation. On iOS 26 the system TabView is a floating Liquid Glass bar.
+/// Bottom navigation. On iOS 26 the system tab bar is a floating Liquid Glass bar; on iOS 17–18 it is the classic bar.
 struct RootView: View {
     /// Launch argument `-tab chat` opens a tab directly (used by CI screenshots).
     @State private var tab = UserDefaults.standard.string(forKey: "tab") ?? "home"
 
     var body: some View {
         TabView(selection: $tab) {
-            Tab("Home", systemImage: "house.fill", value: "home") { HomeView() }
-            Tab("Chat", systemImage: "bubble.left.and.text.bubble.right.fill", value: "chat") { ChatView() }
-            Tab("Profile", systemImage: "person.crop.circle.fill", value: "profile") { ProfileView() }
+            HomeView().tabItem { Label("Home", systemImage: "house.fill") }.tag("home")
+            ChatView().tabItem { Label("Chat", systemImage: "bubble.left.and.text.bubble.right.fill") }.tag("chat")
+            ProfileView().tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }.tag("profile")
         }
         .tint(Theme.activeTab)
     }
