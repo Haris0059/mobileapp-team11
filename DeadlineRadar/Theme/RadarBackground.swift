@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Mist (light) or ink (dark) background with faint radar rings from the top corner and one amber glow.
+/// Mist (light) or ink (dark) background with one amber glow in the top corner.
 struct RadarBackground: View {
     @Environment(\.colorScheme) private var scheme
 
@@ -9,14 +9,6 @@ struct RadarBackground: View {
             Theme.background
             RadialGradient(colors: [Theme.amber.opacity(scheme == .dark ? 0.28 : 0.5), .clear],
                            center: UnitPoint(x: 0.9, y: 0.02), startRadius: 0, endRadius: 340)
-            Canvas { context, size in
-                let center = CGPoint(x: size.width * 0.85, y: 40)
-                for i in 1...9 {
-                    let r = CGFloat(i) * 70
-                    let ring = Path(ellipseIn: CGRect(x: center.x - r, y: center.y - r, width: r * 2, height: r * 2))
-                    context.stroke(ring, with: .color(Theme.ink.opacity(scheme == .dark ? 0.06 : 0.12)), lineWidth: 1)
-                }
-            }
         }
         .ignoresSafeArea()
     }
