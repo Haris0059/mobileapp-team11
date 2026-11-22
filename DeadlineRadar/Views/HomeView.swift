@@ -1,32 +1,46 @@
 import SwiftUI
 
-/// Home: one place for what matters today: the week, next deadlines, this month and a weekly summary.
+/// Home: the one deadline that matters now, the next 7 days, and everything after it.
 struct HomeView: View {
-    private let deadlines = MockData.deadlines.sorted { $0.due < $1.due }
-    @State private var selectedDay = Calendar.current.startOfDay(for: .now)
+    @State private var deadlines = MockData.deadlines.sorted { $0.due < $1.due }
+    /// nil = show everything upcoming; a day = show only that day.
+    @State private var selectedDay: Date?
+    private let calendar = Calendar.current
+
+    private var open: [Deadline] { deadlines.filter { !$0.isDone } }
+
+    private var listed: [Deadline] {
+        guard let day = selectedDay else { return Array(open.dropFirst()) }
+        return open.filter { calendar.isDate($0.due, inSameDayAs: day) }
+    }
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 22) {
+            VStack(alignment: .leading, spacing: 24) {
                 header
-                WeekStrip(selected: $selectedDay, deadlines: deadlines)
 
-                section("Next deadlines") {
-                    VStack(spacing: 10) {
-                        ForEach(deadlines.prefix(4)) { DeadlineRow(deadline: $0) }
-                    }
+                if let next = open.first {
+                    NextUpCard(deadline: next) { markDone(next) }
+                        .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .leading).combined(with: .opacity)))
+                        .id(next.id)
+                } else {
+                    Text("All caught up. Nothing due.")
+                        .font(.title3.weight(.semibold))
+                        .glassCard(cornerRadius: 26, padding: 20)
                 }
 
-                section("This week") {
-                    HStack(spacing: 10) {
-                        StatTile(value: "\(deadlines.filter { $0.urgency != .later }.count)", label: "Due")
-                        StatTile(value: "\(Set(deadlines.map(\.course)).count)", label: "Courses")
-                        StatTile(value: "2", label: "Done")
-                    }
-                }
+                WeekStrip(selected: $selectedDay, deadlines: open)
 
-                section(Date.now.formatted(.dateTime.month(.wide).year())) {
-                    MonthGrid(deadlines: deadlines)
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(selectedDay?.formatted(.dateTime.weekday(.wide).day().month(.wide)) ?? "After that")
+                        .font(.headline)
+                    if listed.isEmpty {
+                        Text(selectedDay == nil ? "Nothing else coming up." : "Nothing due this day.")
+                            .foregroundStyle(.secondary)
+                            .padding(.vertical, 4)
+                    } else {
+                        DeadlineList(deadlines: listed)
+                    }
                 }
             }
             .padding(.horizontal, 16)
@@ -38,10 +52,10 @@ struct HomeView: View {
     }
 
     private var header: some View {
-        HStack(alignment: .center) {
+        HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Today").font(.largeTitle.bold()).tracking(-0.5)
-                Text("\(Date.now.formatted(.dateTime.weekday(.wide).day().month(.wide))) · \(deadlines.filter { $0.urgency != .later }.count) due this week")
+                Text(Date.now.formatted(.dateTime.weekday(.wide).day().month(.wide)))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -51,54 +65,116 @@ struct HomeView: View {
         .padding(.top, 8)
     }
 
-    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(title).font(.headline)
-            content()
-        }
+    private func markDone(_ deadline: Deadline) {
+        guard let index = deadlines.firstIndex(where: { $0.id == deadline.id }) else { return }
+        withAnimation(.spring(duration: 0.4, bounce: 0)) { deadlines[index].isDone = true }
     }
 }
 
-// MARK: - Week strip
+// MARK: - Next up
+
+private struct NextUpCard: View {
+    let deadline: Deadline
+    let onDone: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("NEXT UP").font(.caption.weight(.semibold)).tracking(1.2).foregroundStyle(.secondary)
+                Spacer()
+                Text(deadline.course)
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Theme.ink.opacity(0.1), in: .capsule)
+            }
+
+            Text(deadline.title).font(.title2.bold()).padding(.top, 4)
+
+            TimelineView(.periodic(from: .now, by: 60)) { _ in
+                Text(deadline.countdown(long: true))
+                    .font(.system(size: 48, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .tracking(-1)
+                    .foregroundStyle(deadline.urgency == .today ? Theme.urgent : Theme.text)
+                    .contentTransition(.numericText())
+            }
+
+            Text("Due \(deadline.due.formatted(.dateTime.weekday(.wide).hour().minute()))")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Button(action: onDone) {
+                Label("Mark done", systemImage: "checkmark")
+                    .font(.body.weight(.semibold))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 13)
+                    .foregroundStyle(Theme.onAmber)
+                    .background(Theme.amber, in: .capsule)
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 12)
+        }
+        .glassCard(cornerRadius: 26, padding: 20)
+    }
+}
+
+// MARK: - Week strip (filters the list)
 
 private struct WeekStrip: View {
-    @Binding var selected: Date
+    @Binding var selected: Date?
     let deadlines: [Deadline]
     private let calendar = Calendar.current
 
+    /// Today and the next 6 days: past days are not useful here.
     private var days: [Date] {
-        let start = calendar.dateInterval(of: .weekOfYear, for: .now)?.start ?? .now
-        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: start) }
+        (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: calendar.startOfDay(for: .now)) }
     }
 
     var body: some View {
         HStack(spacing: 6) {
-                ForEach(days, id: \.self) { day in
-                    let isSelected = calendar.isDate(day, inSameDayAs: selected)
-                    let hasDeadline = deadlines.contains { calendar.isDate($0.due, inSameDayAs: day) }
-                    Button {
-                        withAnimation(.spring(duration: 0.3, bounce: 0)) { selected = day }
-                    } label: {
-                        VStack(spacing: 3) {
-                            Text(day.formatted(.dateTime.weekday(.narrow))).font(.caption2).opacity(0.7)
-                            Text(day.formatted(.dateTime.day())).font(.callout.weight(.semibold))
-                            Circle().fill(hasDeadline ? Theme.urgent : .clear).frame(width: 4, height: 4)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .foregroundStyle(isSelected ? Theme.onAmber : Theme.text)
-                        .background {
-                            if isSelected { RoundedRectangle(cornerRadius: 12).fill(Theme.amber) }
-                        }
-                        .glass(in: .rect(cornerRadius: 12), enabled: !isSelected)
+            ForEach(days, id: \.self) { day in
+                let isSelected = selected.map { calendar.isDate(day, inSameDayAs: $0) } ?? false
+                let count = deadlines.filter { calendar.isDate($0.due, inSameDayAs: day) }.count
+                Button {
+                    withAnimation(.spring(duration: 0.3, bounce: 0)) { selected = isSelected ? nil : day }
+                } label: {
+                    VStack(spacing: 3) {
+                        Text(day.formatted(.dateTime.weekday(.narrow))).font(.caption2).opacity(0.7)
+                        Text(day.formatted(.dateTime.day())).font(.callout.weight(.semibold))
+                        Circle().fill(count > 0 ? Theme.urgent : .clear).frame(width: 4, height: 4)
                     }
-                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .foregroundStyle(isSelected ? Theme.onAmber : Theme.text)
+                    .background {
+                        if isSelected { RoundedRectangle(cornerRadius: 12).fill(Theme.amber) }
+                    }
+                    .glass(in: .rect(cornerRadius: 12), enabled: !isSelected)
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("\(day.formatted(.dateTime.weekday(.wide).day().month())), \(count) due")
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
+            }
         }
     }
 }
 
-// MARK: - Deadline row
+// MARK: - List
+
+private struct DeadlineList: View {
+    let deadlines: [Deadline]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(deadlines.enumerated()), id: \.element.id) { index, deadline in
+                if index > 0 { Divider().padding(.leading, 34) }
+                DeadlineRow(deadline: deadline)
+            }
+        }
+        .glassCard(padding: 4)
+    }
+}
 
 struct DeadlineRow: View {
     let deadline: Deadline
@@ -107,102 +183,28 @@ struct DeadlineRow: View {
         switch deadline.urgency {
         case .today: Theme.urgent
         case .thisWeek: Theme.amber
-        case .later: Theme.ink.opacity(0.3)
+        case .later: Theme.ink.opacity(0.25)
         }
     }
 
     var body: some View {
         HStack(spacing: 12) {
-            Capsule().fill(color).frame(width: 5)
+            Circle().fill(color).frame(width: 8, height: 8)
             VStack(alignment: .leading, spacing: 2) {
-                Text(deadline.title).font(.body.weight(.semibold))
+                Text(deadline.title).font(.body.weight(.medium))
                 Text("\(deadline.course) · \(deadline.due.formatted(.dateTime.weekday(.abbreviated).hour().minute()))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Text(deadline.countdown)
-                .font(.caption.bold())
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(color.opacity(0.2), in: .capsule)
-                .foregroundStyle(deadline.urgency == .today ? Theme.urgent : Theme.text)
+            Text(deadline.countdown())
+                .font(.subheadline.weight(.semibold))
+                .monospacedDigit()
+                .foregroundStyle(deadline.urgency == .today ? Theme.urgent : .secondary)
         }
-        .fixedSize(horizontal: false, vertical: true)
-        .glassCard(padding: 12)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
         .accessibilityElement(children: .combine)
-    }
-}
-
-// MARK: - Stats
-
-private struct StatTile: View {
-    let value: String
-    let label: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(value).font(.title.bold()).monospacedDigit()
-            Text(label).font(.caption).foregroundStyle(.secondary)
-        }
-        .glassCard(padding: 12)
-    }
-}
-
-// MARK: - Month grid
-
-private struct MonthGrid: View {
-    let deadlines: [Deadline]
-    private let calendar = Calendar.current
-
-    /// nil = empty cell before the 1st of the month.
-    private var cells: [Int?] {
-        guard let month = calendar.dateInterval(of: .month, for: .now),
-              let count = calendar.range(of: .day, in: .month, for: .now)?.count else { return [] }
-        let lead = (calendar.component(.weekday, from: month.start) - calendar.firstWeekday + 7) % 7
-        return Array(repeating: nil, count: lead) + (1...count).map { $0 }
-    }
-
-    private var weekdaySymbols: [String] {
-        let symbols = calendar.veryShortStandaloneWeekdaySymbols
-        let first = calendar.firstWeekday - 1
-        return Array(symbols[first...] + symbols[..<first])
-    }
-
-    private func hasDeadline(on day: Int) -> Bool {
-        deadlines.contains {
-            calendar.isDate($0.due, equalTo: .now, toGranularity: .month) && calendar.component(.day, from: $0.due) == day
-        }
-    }
-
-    var body: some View {
-        let today = calendar.component(.day, from: .now)
-        let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
-
-        VStack(spacing: 8) {
-            HStack {
-                ForEach(weekdaySymbols.indices, id: \.self) { i in
-                    Text(weekdaySymbols[i]).font(.caption2.weight(.semibold)).foregroundStyle(.secondary).frame(maxWidth: .infinity)
-                }
-            }
-            LazyVGrid(columns: columns, spacing: 6) {
-                ForEach(cells.indices, id: \.self) { i in
-                    if let day = cells[i] {
-                        VStack(spacing: 2) {
-                            Text("\(day)")
-                                .font(.footnote.weight(day == today ? .bold : .regular))
-                                .frame(width: 28, height: 28)
-                                .foregroundStyle(day == today ? Theme.onAmber : Theme.text)
-                                .background(day == today ? Theme.amber : .clear, in: .circle)
-                            Circle().fill(hasDeadline(on: day) ? Theme.urgent : .clear).frame(width: 4, height: 4)
-                        }
-                    } else {
-                        Color.clear.frame(height: 34)
-                    }
-                }
-            }
-        }
-        .glassCard()
     }
 }
 

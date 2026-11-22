@@ -43,14 +43,15 @@ struct ProfileView: View {
 
     private var identity: some View {
         HStack(spacing: 14) {
-            Text("ST")
+            Text(MockData.student.initials)
                 .font(.title2.bold())
                 .foregroundStyle(Theme.onAmber)
                 .frame(width: 64, height: 64)
                 .background(Theme.amber, in: .circle)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Student").font(.title3.bold())
-                Text("International Burch University").font(.subheadline).foregroundStyle(.secondary)
+                Text(MockData.student.name).font(.title3.bold())
+                Text(MockData.student.programme).font(.subheadline).foregroundStyle(.secondary)
+                Text("International Burch University").font(.caption).foregroundStyle(.secondary)
             }
         }
         .glassCard()

@@ -7,6 +7,7 @@ struct Deadline: Identifiable {
     let title: String
     let course: String
     let due: Date
+    var isDone = false
 
     enum Urgency { case today, thisWeek, later }
 
@@ -17,10 +18,13 @@ struct Deadline: Identifiable {
         return .later
     }
 
-    /// Short countdown such as "5h" or "3d".
-    var countdown: String {
-        let hours = max(0, Int(due.timeIntervalSinceNow / 3600))
-        return hours < 24 ? "\(hours)h" : "\(hours / 24)d"
+    /// "45m", "6h", "3d" for lists; "6h 12m", "2d 9h" when `long`.
+    func countdown(long: Bool = false) -> String {
+        let minutes = max(0, Int(due.timeIntervalSinceNow / 60))
+        let (d, h, m) = (minutes / 1440, minutes % 1440 / 60, minutes % 60)
+        if d > 0 { return long ? "\(d)d \(h)h" : "\(d)d" }
+        if h > 0 { return long ? "\(h)h \(m)m" : "\(h)h" }
+        return "\(m)m"
     }
 }
 
@@ -31,22 +35,29 @@ struct ChatMessage: Identifiable {
 }
 
 enum MockData {
-    private static func inHours(_ h: Double) -> Date { Date().addingTimeInterval(h * 3600) }
+    /// Today + `days`, at a fixed clock time, like real deadlines (23:59, 09:00, start of class).
+    private static func day(_ days: Int, _ hour: Int, _ minute: Int = 0) -> Date {
+        let calendar = Calendar.current
+        let date = calendar.date(byAdding: .day, value: days, to: calendar.startOfDay(for: .now)) ?? .now
+        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: date) ?? date
+    }
 
     static let deadlines: [Deadline] = [
-        Deadline(title: "Database schema", course: "IT 3002", due: inHours(5)),
-        Deadline(title: "Kick-off pack", course: "IT 3002", due: inHours(50)),
-        Deadline(title: "Quiz 3", course: "Mathematics", due: inHours(110)),
-        Deadline(title: "Essay draft", course: "English", due: inHours(190)),
-        Deadline(title: "Lab report", course: "Physics", due: inHours(240)),
-        Deadline(title: "Milestone 1 presentation", course: "IT 3002", due: inHours(330)),
+        Deadline(title: "Database schema", course: "IT 3002", due: day(0, 23, 59)),
+        Deadline(title: "Lab 7 kick-off pack", course: "IT 3002", due: day(2, 9)),
+        Deadline(title: "Quiz 3: Integrals", course: "MATH 2101", due: day(4, 10, 15)),
+        Deadline(title: "Essay first draft", course: "ENG 1002", due: day(6, 23, 59)),
+        Deadline(title: "Lab report 5", course: "PHY 1201", due: day(9, 17)),
+        Deadline(title: "Milestone 1 presentation", course: "IT 3002", due: day(13, 9)),
     ]
+
+    static let student = (name: "Lejla Kovačević", initials: "LK", programme: "Information Technology · Year 3")
 
     static let chat: [ChatMessage] = [
-        ChatMessage(text: "Hi! I'm Radar. Once connected to Moodle I can answer questions about your courses and deadlines.", fromUser: false),
-        ChatMessage(text: "What's due this week?", fromUser: true),
-        ChatMessage(text: "You have 3 deadlines this week. The closest is the IT 3002 database schema, due in 5 hours.", fromUser: false),
+        ChatMessage(text: "Hi Lejla! Once I'm connected to Moodle I can answer questions about your courses and deadlines.", fromUser: false),
+        ChatMessage(text: "What should I work on first?", fromUser: true),
+        ChatMessage(text: "The IT 3002 database schema is due tonight at 23:59. After that, the kick-off pack is due in two days at 09:00.", fromUser: false),
     ]
 
-    static let suggestions = ["What's due this week?", "Summarise IT 3002", "When is my next quiz?"]
+    static let suggestions = ["What should I work on first?", "Summarise IT 3002", "When is my next quiz?"]
 }
