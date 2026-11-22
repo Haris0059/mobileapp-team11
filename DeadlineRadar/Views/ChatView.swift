@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Chat with "Radar", the AI assistant that will later be connected to the university and Moodle.
+/// Chat with "Bit", the AI assistant that will later be connected to the university and Moodle.
 /// UI only: replies are a fixed placeholder.
 struct ChatView: View {
     @State private var messages = MockData.chat
@@ -24,7 +24,7 @@ struct ChatView: View {
             }
             .safeAreaInset(edge: .bottom) { composer }
             .background(Theme.background)
-            .navigationTitle("Radar AI")
+            .navigationTitle("Bit")
             .navigationBarTitleDisplayMode(.inline)
             .foregroundStyle(Theme.text)
         }

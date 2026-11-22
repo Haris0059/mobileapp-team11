@@ -54,7 +54,7 @@ enum MockData {
     static let student = (name: "Lejla Kovačević", initials: "LK", programme: "Information Technology · Year 3")
 
     static let chat: [ChatMessage] = [
-        ChatMessage(text: "Hi Lejla! Once I'm connected to Moodle I can answer questions about your courses and deadlines.", fromUser: false),
+        ChatMessage(text: "Hi Lejla, I'm Bit! Once I'm connected to Moodle I can answer questions about your courses and deadlines.", fromUser: false),
         ChatMessage(text: "What should I work on first?", fromUser: true),
         ChatMessage(text: "The IT 3002 database schema is due tonight at 23:59. After that, the kick-off pack is due in two days at 09:00.", fromUser: false),
     ]

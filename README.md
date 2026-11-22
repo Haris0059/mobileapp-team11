@@ -22,7 +22,7 @@ This repository is the **clickable UI prototype** for the iPhone. It has **no ba
 | Tab | What it shows |
 |---|---|
 | **Home** | Next up card with live countdown, week strip that filters the list, remaining deadlines coloured by urgency |
-| **Chat** | "Radar AI", a chat assistant that will be connected to Moodle (placeholder replies for now) |
+| **Chat** | "Bit", a chat assistant that will be connected to Moodle (placeholder replies for now) |
 | **Profile** | Native settings form: student, connected sources (Moodle, iCal), reminders, version. No sign-up yet |
 
 Navigation is the system bottom tab bar, which on iOS 26 is a floating **Liquid Glass** bar. The app runs on **iOS 17+**: on iOS 17–18 glass falls back to the frosted material and the classic tab bar.
