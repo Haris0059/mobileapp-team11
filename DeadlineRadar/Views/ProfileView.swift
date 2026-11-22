@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Profile: who you are, which sources are connected, reminder and appearance settings. UI only, no sign-up yet.
+/// Profile: who you are, which sources are connected, reminder settings. UI only, no sign-up yet.
 struct ProfileView: View {
     @State private var remindThreeDays = true
     @State private var remindOneDay = true
@@ -8,77 +8,45 @@ struct ProfileView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 18) {
-                    identity
-
-                    group("Sources") {
-                        SourceRow(icon: "graduationcap.fill", title: "Moodle", detail: "Not connected")
-                        Divider()
-                        SourceRow(icon: "calendar", title: "iCal feed", detail: "Not connected")
+            Form {
+                Section {
+                    HStack(spacing: 14) {
+                        Text(MockData.student.initials)
+                            .font(.title3.bold())
+                            .foregroundStyle(Theme.ink)
+                            .frame(width: 56, height: 56)
+                            .background(Theme.ink.opacity(0.1), in: .circle)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(MockData.student.name).font(.headline)
+                            Text(MockData.student.programme).font(.subheadline).foregroundStyle(.secondary)
+                        }
                     }
-
-                    group("Reminders") {
-                        Toggle("3 days before", isOn: $remindThreeDays)
-                        Divider()
-                        Toggle("1 day before", isOn: $remindOneDay)
-                        Divider()
-                        Toggle("1 hour before", isOn: $remindOneHour)
-                    }
-                    .tint(Theme.amber)
-
-                    group("About") {
-                        LabeledContent("Version", value: "0.1 prototype")
-                        Divider()
-                        LabeledContent("Team", value: "IT 3002 · Team 11")
-                    }
+                    .padding(.vertical, 4)
                 }
-                .padding(16)
+
+                Section {
+                    LabeledContent { Text("Not connected") } label: { Label("Moodle", systemImage: "graduationcap") }
+                    LabeledContent { Text("Not connected") } label: { Label("iCal feed", systemImage: "calendar") }
+                } header: {
+                    Text("Sources")
+                } footer: {
+                    Text("Deadlines sync from connected sources.")
+                }
+
+                Section("Remind me") {
+                    Toggle("3 days before", isOn: $remindThreeDays)
+                    Toggle("1 day before", isOn: $remindOneDay)
+                    Toggle("1 hour before", isOn: $remindOneHour)
+                }
+                .tint(Theme.amber)
+
+                Section {
+                    LabeledContent("Version", value: "0.1")
+                }
             }
-            .background(RadarBackground())
+            .scrollContentBackground(.hidden)
+            .background(Theme.background)
             .navigationTitle("Profile")
-            .foregroundStyle(Theme.text)
-        }
-    }
-
-    private var identity: some View {
-        HStack(spacing: 14) {
-            Text(MockData.student.initials)
-                .font(.title2.bold())
-                .foregroundStyle(Theme.onAmber)
-                .frame(width: 64, height: 64)
-                .background(Theme.amber, in: .circle)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(MockData.student.name).font(.title3.bold())
-                Text(MockData.student.programme).font(.subheadline).foregroundStyle(.secondary)
-                Text("International Burch University").font(.caption).foregroundStyle(.secondary)
-            }
-        }
-        .glassCard()
-    }
-
-    private func group<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(.headline).padding(.leading, 4)
-            VStack(spacing: 10) { content() }.glassCard()
-        }
-    }
-}
-
-private struct SourceRow: View {
-    let icon: String
-    let title: String
-    let detail: String
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .foregroundStyle(Theme.ink)
-                .frame(width: 30, height: 30)
-                .glass(in: .rect(cornerRadius: 8))
-            Text(title)
-            Spacer()
-            Text(detail).font(.subheadline).foregroundStyle(.secondary)
         }
     }
 }

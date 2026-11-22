@@ -16,11 +16,11 @@ struct RootView: View {
 
     var body: some View {
         TabView(selection: $tab) {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }.tag("home")
-            ChatView().tabItem { Label("Chat", systemImage: "bubble.left.and.text.bubble.right.fill") }.tag("chat")
-            ProfileView().tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }.tag("profile")
+            HomeView().tabItem { Label("Home", systemImage: "house") }.tag("home")
+            ChatView().tabItem { Label("Chat", systemImage: "bubble.left.and.bubble.right") }.tag("chat")
+            ProfileView().tabItem { Label("Profile", systemImage: "person.crop.circle") }.tag("profile")
         }
-        .tint(Theme.activeTab)
+        .tint(Theme.ink)
     }
 }
 

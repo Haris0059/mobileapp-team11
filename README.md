@@ -21,9 +21,9 @@ This repository is the **clickable UI prototype** for the iPhone. It has **no ba
 
 | Tab | What it shows |
 |---|---|
-| **Home** | Today header, week strip, next deadlines coloured by urgency, a weekly summary and the month calendar |
-| **Chat** | "Radar AI", a chat assistant that will be connected to the university and Moodle (placeholder replies for now) |
-| **Profile** | Student card, connected sources (Moodle, iCal), reminder settings and app info. No sign-up yet |
+| **Home** | Next up card with live countdown, week strip that filters the list, remaining deadlines coloured by urgency |
+| **Chat** | "Radar AI", a chat assistant that will be connected to Moodle (placeholder replies for now) |
+| **Profile** | Native settings form: student, connected sources (Moodle, iCal), reminders, version. No sign-up yet |
 
 Navigation is the system bottom tab bar, which on iOS 26 is a floating **Liquid Glass** bar. The app runs on **iOS 17+**: on iOS 17–18 glass falls back to the frosted material and the classic tab bar.
 
@@ -41,8 +41,9 @@ The chosen direction is **L3 · Radar Day** for light mode and **Phosphor** for 
 
 Rules:
 
-- Amber is only ever a **fill** (selected day, today, your chat bubbles, the send button) with ink text on top, never a text colour on a light background.
-- Every surface is **Liquid Glass** (`.glassEffect`) over a plain mist/ink background with one amber glow in the top corner.
+- Amber means **"yours / on / do this"**: the primary action (Mark done, send), your chat bubbles, the selected day and switched-on toggles. Always a fill with ink text on top. Everything else is ink.
+- **Liquid Glass** (`.glassEffect`) is only for floating controls (tab bar, chat composer). Content sits in grouped `List`/`Form` sections over a plain mist/ink background, the same on every screen.
+- Use native components (`Form`, `.borderedProminent`) before custom ones.
 - Deadlines are coloured by urgency: red = due within 24 h, amber = this week, faded ink = later.
 
 All design rounds (logos, palettes, light-mode versions) are in [`design/`](design/). Open `design/index.html` in a browser to compare them.
@@ -64,8 +65,8 @@ The project uses Xcode's synchronized folders: any file you add under `DeadlineR
 ```
 DeadlineRadar/
   DeadlineRadarApp.swift     app entry + bottom tab bar (RootView)
-  Theme/Theme.swift          colour tokens (light/dark) and the glassCard() style
-  Theme/RadarBackground.swift background glow and the logo mark, drawn in code
+  Theme/Theme.swift          colour tokens (light/dark) and the glass() style
+  Theme/RadarMark.swift      the logo mark, drawn in code
   Models/MockData.swift      fake deadlines and chat messages
   Views/HomeView.swift       Home tab
   Views/ChatView.swift       Chat tab

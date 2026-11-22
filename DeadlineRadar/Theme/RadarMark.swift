@@ -1,19 +1,5 @@
 import SwiftUI
 
-/// Mist (light) or ink (dark) background with one amber glow in the top corner.
-struct RadarBackground: View {
-    @Environment(\.colorScheme) private var scheme
-
-    var body: some View {
-        ZStack {
-            Theme.background
-            RadialGradient(colors: [Theme.amber.opacity(scheme == .dark ? 0.28 : 0.5), .clear],
-                           center: UnitPoint(x: 0.9, y: 0.02), startRadius: 0, endRadius: 340)
-        }
-        .ignoresSafeArea()
-    }
-}
-
 /// The app logo mark: two rings and an amber sweep. Drawn in a 100×100 grid, scales to any size.
 struct RadarMark: View {
     var ring: Color = Theme.ink
@@ -40,8 +26,5 @@ struct RadarMark: View {
 }
 
 #Preview {
-    ZStack {
-        RadarBackground()
-        RadarMark().frame(width: 120)
-    }
+    RadarMark().frame(width: 120)
 }

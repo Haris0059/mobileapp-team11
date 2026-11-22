@@ -23,7 +23,7 @@ struct ChatView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) { composer }
-            .background(RadarBackground())
+            .background(Theme.background)
             .navigationTitle("Radar AI")
             .navigationBarTitleDisplayMode(.inline)
             .foregroundStyle(Theme.text)
@@ -58,7 +58,7 @@ struct ChatView: View {
                     .glass(in: .rect(cornerRadius: 22))
 
                 Button(action: send) {
-                    Image(systemName: "arrow.up")
+                    Image(systemName: "paperplane.fill")
                         .font(.body.bold())
                         .foregroundStyle(Theme.onAmber)
                         .frame(width: 44, height: 44)
@@ -92,11 +92,10 @@ private struct MessageBubble: View {
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .foregroundStyle(message.fromUser ? Theme.onAmber : Theme.text)
-                .background {
-                    if message.fromUser { UnevenRoundedRectangle(cornerRadii: .init(topLeading: 18, bottomLeading: 18, bottomTrailing: 6, topTrailing: 18)).fill(Theme.amber) }
-                }
-                .glass(in: UnevenRoundedRectangle(cornerRadii: .init(topLeading: 18, bottomLeading: 6, bottomTrailing: 18, topTrailing: 18)),
-                       enabled: !message.fromUser)
+                .background(message.fromUser ? Theme.amber : Theme.surface,
+                            in: UnevenRoundedRectangle(cornerRadii: message.fromUser
+                                ? .init(topLeading: 18, bottomLeading: 18, bottomTrailing: 6, topTrailing: 18)
+                                : .init(topLeading: 18, bottomLeading: 6, bottomTrailing: 18, topTrailing: 18)))
 
             if !message.fromUser { Spacer(minLength: 48) }
         }

@@ -2,18 +2,19 @@ import SwiftUI
 import UIKit
 
 /// Design "L3 · Radar Day" (light) + "Phosphor" (dark). See design/index.html.
-/// Rule: amber is only a fill (selected day, highlights) with ink text on top, never a text colour on light backgrounds.
+/// Rules: amber marks only the primary action and the current selection, always as a fill with ink text on top.
+/// Glass is only for floating controls; content sits in grouped List/Form sections.
 enum Theme {
     static let background = Color(light: 0xEAEEF4, dark: 0x0C1018)
+    /// Solid content cards: the same colour as Form rows on Profile, so every screen matches.
+    static let surface    = Color(uiColor: .secondarySystemGroupedBackground)
     static let text       = Color(light: 0x16203A, dark: 0xF3EEE3)
-    /// Icons, rings, active tab in light mode.
+    /// Icons, rings, active tab, your chat bubbles.
     static let ink        = Color(light: 0x24324F, dark: 0xF3EEE3)
     static let amber      = Color(hex: 0xFFB23E)
     /// Text that sits on an amber fill, in both modes.
     static let onAmber    = Color(hex: 0x16203A)
     static let urgent     = Color(light: 0xCC3A22, dark: 0xFF6B4F)
-    /// Selected tab: ink on light glass, amber on dark glass.
-    static let activeTab  = Color(light: 0x24324F, dark: 0xFFB23E)
 }
 
 extension Color {
@@ -48,10 +49,4 @@ extension View {
         }
     }
 
-    /// Glass card used for every surface in the app.
-    func glassCard(cornerRadius: CGFloat = 18, padding: CGFloat = 14) -> some View {
-        self.padding(padding)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .glass(in: .rect(cornerRadius: cornerRadius))
-    }
 }
